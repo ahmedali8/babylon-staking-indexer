@@ -86,6 +86,8 @@ go mod tidy
 
 3. Run the service
 
+Refer to the [GUIDE](./GUIDE.md)
+
 ```bash
 make run-local
 ```
