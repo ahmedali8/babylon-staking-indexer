@@ -176,12 +176,12 @@ DB_ADDRESS="mongodb+srv://cluster0.<shard>.mongodb.net/?retryWrites=true&w=major
 DB_DB_NAME=babylon-indexer-test
 
 # Bitcoind RPC (adjust based on setup)
-BTC_RPCHOST=127.0.0.1:38332           # For local Signet
-# BTC_RPCHOST=127.0.0.1:8545          # For remote Mainnet via NGINX
+BTC_RPCHOST=127.0.0.1:38332                                    # For local Signet
+# BTC_RPCHOST=127.0.0.1:8545                                   # For remote Mainnet via NGINX
 
 BTC_RPCUSER=admin
 BTC_RPCPASS=password
-BTC_NETPARAMS=signet                  # Use 'mainnet' for Mainnet RPC
+BTC_NETPARAMS=signet                                           # Use 'mainnet' for Mainnet RPC
 
 # Babylon Network
 BBN_RPC__ADDR=https://babylon-testnet-rpc-archive-1.nodes.guru # User a Mainnet RPC for 'babylon genesis mainnet'
@@ -189,7 +189,60 @@ BBN_RPC__ADDR=https://babylon-testnet-rpc-archive-1.nodes.guru # User a Mainnet 
 
 ## Running the Indexer
 
-Finally, run the indexer using the following command. The `config-local.yml` file serves as a base, and actual values are overridden via the `.env` file.
+Finally, run the indexer using the following instructions (Option A is recommended). The `config-local.yml` file serves as a base, and actual values are overridden via the `.env` file.
+
+### Option A. Build Binary + Use systemd (Recommended)
+
+
+1. Build the binary
+
+```bash
+go build -o indexer cmd/babylon-staking-indexer/main.go
+```
+
+
+2. Create a systemd service
+
+```bash
+sudo vi /etc/systemd/system/babylon-indexer.service
+```
+
+Paste this:
+
+```ini
+[Unit]
+Description=Babylon Staking Indexer
+After=network.target docker.service
+
+[Service]
+WorkingDirectory=/home/ubuntu/babylon-staking-indexer
+ExecStart=/home/ubuntu/babylon-staking-indexer/indexer --config config/config-local.yml
+EnvironmentFile=/home/ubuntu/babylon-staking-indexer/.env
+Restart=always
+RestartSec=5
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target
+```
+
+
+3. Enable and start
+
+```bash
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl enable babylon-indexer
+sudo systemctl start babylon-indexer
+```
+
+4. View logs
+
+```bash
+journalctl -u babylon-indexer -f
+```
+
+### Option A. Via go run
 
 ```bash
 go run cmd/babylon-staking-indexer/main.go --config config/config-local.yml
