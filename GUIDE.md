@@ -184,7 +184,7 @@ BTC_RPCPASS=password
 BTC_NETPARAMS=signet                  # Use 'mainnet' for Mainnet RPC
 
 # Babylon Network
-BBN_RPC_ADDR=https://babylon-testnet-rpc-archive-1.nodes.guru # User a Mainnet RPC for 'babylon genesis mainnet'
+BBN_RPC__ADDR=https://babylon-testnet-rpc-archive-1.nodes.guru # User a Mainnet RPC for 'babylon genesis mainnet'
 ```
 
 ## Running the Indexer
